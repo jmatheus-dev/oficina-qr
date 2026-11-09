@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Histórico do veículo — Auto Mecânica Itabaiana</title>
+<meta name="description" content="Serviços feitos no seu carro na Auto Mecânica Itabaiana.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="icon" type="image/png" href="icone.png">
+<link rel="apple-touch-icon" href="icone.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@600&display=swap" rel="stylesheet">
+<style>
+  /* Página do cliente — modelo "Premium" (versão 2.0). Preto e vermelho da logo;
+     verde = o que a oficina já fez / está em dia; amarelo = precisa de atenção. */
+  :root {
+    --preto: #0A0A0A;
+    --vermelho: #CE0405;
+    --fundo: #F4F4F1;
+    --papel: #FFFFFF;
+    --texto: #0A0A0A;
+    --cinza: #525252;
+    --linha: #E7E5E4;
+    --verde: #15803D;
+    --verde-texto: #14532D;
+    --verde-fundo: #ECFDF3;
+    --alerta: #B45309;
+    --alerta-texto: #78350F;
+    --alerta-fundo: #FFF7E6;
+    --alerta-borda: #FCD34D;
+    --titulo: "Sora", "Segoe UI", Arial, sans-serif;
+    --corpo: "Inter", "Segoe UI", Arial, sans-serif;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--fundo); color: var(--texto); font: 17px/1.5 var(--corpo); }
+  a { color: inherit; }
+  h1, h2 { font-family: var(--titulo); margin: 0; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  svg { flex: none; }
+  [hidden] { display: none !important; }
+
+  /* ---------- topo preto ---------- */
+  .heroi { background: var(--preto); color: #fff; padding: 16px 20px 64px; }
+  .heroi-in, .conteudo { max-width: 560px; margin: 0 auto; }
+  .heroi-topo { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .heroi .logo { height: 40px; width: auto; display: block; }
+  .redondo { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #3F3F46; color: #fff; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+  .selo-topo { display: flex; width: fit-content; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; font-size: 14px; font-weight: 600; margin: 18px auto 0; }
+  .selo-topo::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .selo-topo.ok { background: rgba(34,197,94,.16); color: #86EFAC; }
+  .selo-topo.perto { background: rgba(245,158,11,.18); color: #FCD34D; }
+  .selo-topo.atrasada { background: rgba(239,68,68,.2); color: #FCA5A5; }
+  .desenho { display: block; width: 100%; max-width: 330px; height: auto; margin: 18px auto 6px; color: #fff; }
+  .desenho .c { fill: none; stroke: currentColor; stroke-width: 2.1; stroke-linejoin: round; }
+  .desenho .j { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; }
+  .desenho .f { fill: none; stroke: currentColor; stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; }
+  .desenho .g { fill: none; stroke: currentColor; stroke-width: 1.9; }
+  .desenho .o { opacity: .55; }
+  .desenho .chao { stroke: #CE0405; stroke-width: 3; stroke-linecap: round; }
+  .heroi h1 { font-weight: 800; font-size: 30px; line-height: 1.12; letter-spacing: -.4px; margin-top: 6px; text-align: center; overflow-wrap: anywhere; }
+  .meta { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px 12px; margin-top: 10px; font-size: 15px; font-weight: 500; color: #D4D4D4; font-variant-numeric: tabular-nums; }
+  .meta .ponto { width: 4px; height: 4px; border-radius: 50%; background: #CE0405; flex: none; }
+
+  /* placa Mercosul pequena */
+  .placa { display: inline-flex; flex-direction: column; width: 84px; height: 27px; background: #fff; border: 1.5px solid #A3A3A3; border-radius: 4px; overflow: hidden; flex: none; }
+  .placa .faixa { height: 7px; background: #003399; display: flex; align-items: center; justify-content: center; position: relative; }
+  .placa .faixa span { font: 700 5px/1 var(--corpo); letter-spacing: 1px; color: #fff; }
+  .placa .faixa svg { position: absolute; right: 3px; top: 1px; }
+  .placa .letras { flex: 1; display: flex; align-items: center; justify-content: center; font: 600 14px/1 "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: .6px; padding: 0 4px; white-space: nowrap; overflow: hidden; color: #111; }
+
+  /* ---------- cartões ---------- */
+  .conteudo { padding: 0 16px 28px; display: flex; flex-direction: column; gap: 20px; }
+  .cartao { background: var(--papel); border-radius: 24px; padding: 20px; }
+  .flutua { margin-top: -46px; box-shadow: 0 14px 36px rgba(10,10,10,.12); display: flex; flex-direction: column; gap: 16px; }
+  .linha-tit { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .linha-tit h2 { font-size: 18px; font-weight: 700; }
+  .pilula { font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+  .pilula.ok { color: var(--verde-texto); background: var(--verde-fundo); }
+  .pilula.perto, .pilula.verificar { color: var(--alerta-texto); background: #FEF3C7; }
+  .pilula.atrasada { color: #7F1D1D; background: #FEE2E2; }
+  .quando { font-size: 13px; color: var(--cinza); white-space: nowrap; }
+  .quando.perto { color: #B45309; font-weight: 600; }
+  .quando.atrasada { color: #B91C1C; font-weight: 700; }
+  .restam { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin-top: -4px; }
+  .restam strong { font: 800 46px/1 var(--titulo); letter-spacing: -1.5px; font-variant-numeric: tabular-nums; }
+  .restam strong.curto { font-size: 34px; letter-spacing: -1px; }
+  .restam span { font-size: 17px; color: var(--cinza); }
+  .segmentos { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 5px; }
+  .segmentos span { height: 8px; border-radius: 3px; background: #E7E5E4; }
+  .segmentos span.cheio { background: var(--preto); }
+  .segmentos.perto span.cheio { background: #D97706; }
+  .segmentos.atrasada span.cheio { background: #B91C1C; }
+  .blocos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .blocos div { background: #F5F5F4; border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .blocos span { font-size: 13px; color: var(--cinza); }
+  .blocos strong { font: 700 19px/1.2 var(--titulo); font-variant-numeric: tabular-nums; }
+  .proxima { display: flex; align-items: center; gap: 18px; }
+  .anel { position: relative; width: 124px; height: 124px; flex: none; }
+  .anel .meio { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .anel strong { font: 800 26px/1 var(--titulo); letter-spacing: -.5px; }
+  .anel span { font-size: 13px; color: var(--cinza); }
+  .valores { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .valores span { display: block; font-size: 13px; color: var(--cinza); }
+  .valores strong { font: 700 21px/1.2 var(--titulo); }
+  .nota { margin: 0; font-size: 15px; color: #404040; }
+  .botao { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; padding: 0 18px; border-radius: 999px; background: var(--preto); color: #fff; font: 600 17px/1.2 var(--corpo); text-decoration: none; border: 0; cursor: pointer; width: 100%; text-align: center; }
+  .botao.claro { background: var(--papel); color: var(--texto); border: 1.5px solid #D6D3D1; min-height: 50px; font-size: 15px; }
+  .botao:focus-visible, .redondo:focus-visible, .link:focus-visible { outline: 3px solid var(--vermelho); outline-offset: 2px; }
+  .duas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .link { color: var(--cinza); font-size: 14px; text-align: center; }
+
+  /* último serviço (verde) */
+  .feito { background: var(--verde); color: #fff; display: flex; flex-direction: column; gap: 14px; }
+  .feito .linha-tit div > span { font-size: 13px; letter-spacing: 1.4px; text-transform: uppercase; opacity: .92; display: block; }
+  .feito h2 { font-size: 21px; }
+  .feito .marca { width: 48px; height: 48px; border-radius: 50%; background: #fff; color: var(--verde); display: flex; align-items: center; justify-content: center; flex: none; }
+  .feito ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .feito li { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,.14); border-radius: 14px; padding: 12px 14px; font-weight: 600; overflow-wrap: anywhere; }
+  .feito .obs { font-size: 15px; }
+  .garantia-barra { height: 8px; border-radius: 4px; background: rgba(255,255,255,.25); overflow: hidden; }
+  .garantia-barra span { display: block; height: 100%; background: #fff; border-radius: 4px; }
+  .feito .gar { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; font-weight: 600; }
+  .feito .pe { font-size: 13px; opacity: .92; }
+
+  /* saúde do carro */
+  .secao h2 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+  .secao .ref { margin: -6px 0 12px; font-size: 14px; color: var(--cinza); }
+  .saude { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .saude li { background: var(--papel); border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 4px; border: 1.5px solid transparent; }
+  .saude li .cab { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+  .saude li strong { font-size: 15px; }
+  .saude li span.q { font-size: 13px; color: var(--cinza); }
+  .saude li span.km { font-size: 14px; color: var(--texto); margin-top: 2px; }
+  .saude li span.km b { font: 700 17px/1.2 var(--titulo); font-variant-numeric: tabular-nums; }
+  .saude li.verificar, .saude li.perto { background: var(--alerta-fundo); border-color: var(--alerta-borda); }
+  .saude li.verificar strong, .saude li.perto strong { color: var(--alerta-texto); }
+  .saude li.verificar span.q, .saude li.perto span.q, .saude li.verificar span.km, .saude li.perto span.km { color: #92400E; }
+
+  /* linha do tempo */
+  .tempo { margin: 0; padding: 0; list-style: none; }
+  .tempo > li { display: grid; grid-template-columns: 30px minmax(0, 1fr); column-gap: 12px; }
+  .tempo .trilho { display: flex; flex-direction: column; align-items: center; }
+  .tempo .bola { width: 30px; height: 30px; border-radius: 50%; background: var(--verde); color: #fff; display: flex; align-items: center; justify-content: center; }
+  .tempo .fio { width: 2px; flex: 1; background: var(--verde); opacity: .35; }
+  .tempo > li:last-child .fio { display: none; }
+  .tempo article { background: var(--papel); border-radius: 18px; padding: 14px 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .tempo .quando { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .tempo .quando strong { font: 700 15px var(--titulo); }
+  .tempo .quando span { font-size: 13px; color: var(--cinza); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .chips li { display: inline-flex; align-items: center; gap: 5px; font-size: 14px; font-weight: 600; color: var(--verde-texto); background: var(--verde-fundo); padding: 4px 10px; border-radius: 8px; overflow-wrap: anywhere; }
+  .tempo .obs, .tempo .gar { font-size: 13px; color: var(--cinza); margin: 0; }
+  .tempo .gar.valendo { color: var(--verde); font-weight: 600; }
+  .vazio-hist { background: var(--papel); border-radius: 18px; padding: 18px; color: var(--cinza); text-align: center; }
+
+  /* avaliar */
+  .avaliar { background: var(--preto); color: #fff; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+  .avaliar .estrelas { color: #FBBF24; font-size: 20px; letter-spacing: 3px; }
+  .avaliar strong { font: 700 19px var(--titulo); }
+  .avaliar p { margin: 0; font-size: 15px; color: #D4D4D4; }
+  .avaliar .botao { background: #fff; color: var(--preto); min-height: 46px; width: auto; padding: 0 22px; font-size: 15px; }
+
+  /* rodapé */
+  .rodape { text-align: center; font-size: 14px; color: var(--cinza); display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 4px 16px 32px; }
+  .rodape img { height: 34px; width: auto; opacity: .9; }
+  .rodape p { margin: 0; }
+  .codigo { margin-top: 6px; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: var(--papel); border: 1px solid var(--linha); font-size: 13px; }
+  .codigo strong { font-family: var(--titulo); letter-spacing: 1.5px; color: var(--texto); }
+
+  /* mensagens / carregando */
+  .msg { display: flex; flex-direction: column; gap: 12px; }
+  .msg h2 { font-size: 22px; }
+  .msg p { margin: 0; color: #404040; }
+  .carregando .pulso { height: 14px; border-radius: 7px; background: var(--linha); animation: pulso 1.2s ease-in-out infinite; }
+  @keyframes pulso { 50% { opacity: .45; } }
+  @media (prefers-reduced-motion: reduce) { .carregando .pulso { animation: none; } }
+
+  /* certificado: só no PDF */
+  .cert { display: none; }
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 11pt; }
+    .heroi { background: #fff; color: #000; padding: 0 0 8px; }
+    .heroi .logo, .redondo, .desenho, .flutua .botao, .acoes, .avaliar, .mais, .lembrete, .selo-topo { display: none !important; }
+    .heroi h1 { color: #000; }
+    .meta { color: #333; }
+    .flutua { margin-top: 0; box-shadow: none; border: 1px solid #ccc; }
+    .feito { color: #000; background: #fff; border: 2px solid #15803D; }
+    .feito li { background: #F0FDF4; }
+    .tempo > li { break-inside: avoid; }
+    .tempo li.escondido { display: grid !important; }
+    .cert { display: block; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 8px; }
+    .cert h2 { font-size: 16pt; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div id="app" aria-live="polite">
+  <section class="heroi"><div class="heroi-in">
+    <img class="logo" src="logo-escura.png" alt="Auto Mecânica Itabaiana — Peças e Serviços" width="900" height="411">
+    <h1 style="margin-top:22px">Carregando o histórico…</h1>
+  </div></section>
+  <noscript><p style="padding:20px">Ative o JavaScript do navegador para ver o histórico.</p></noscript>
+</div>
+
+<script>
+const CONFIG = {
+  // De onde vem o histórico. O programa Oficina QR publica no ramo "dados" do
+  // GitHub; a planilha antiga (aba "Público" publicada como CSV) continua valendo.
+  fontes: [
+    {
+      url: 'https://api.github.com/repos/automec135/automec135.github.io/contents/historico.csv?ref=dados',
+      accept: 'application/vnd.github.raw+json',
+      reserva: 'https://raw.githubusercontent.com/automec135/automec135.github.io/dados/historico.csv',
+    },
+    { url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQCRi2r-963sWD9_KOUtmVxy0oF-g6sk4OO_qbfeVPKGO5NvvPKSvIY_wHwb4w4VFH6kQnWHphOjzLP/pub?gid=1707716804&single=true&output=csv' },
+  ],
+  // Igual ao sal do programa: o código do QR vira um identificador que não dá para reverter
+  sal: 'automec135|',
+  oficina: 'Auto Mecânica Itabaiana',
+  whatsapp: '557998513926',
+  telefone: '(79) 9851-3926',
+  instagram: 'automec135',
+  googleAvaliar: 'https://search.google.com/local/writereview?placeid=ChIJY4t12n76DwcRfR5_4El1BAM',
+  googleMapa: 'https://www.google.com/maps/search/?api=1&query=Auto%20Mec%C3%A2nica%20Itabaiana&query_place_id=ChIJY4t12n76DwcRfR5_4El1BAM',
+  site: 'https://automec135.github.io/',
+  mesesTrocaOleo: 6,   // sem a data do programa, a troca de óleo vence em 6 meses
+  diasGarantia: 90,    // garantia legal de serviços (Código de Defesa do Consumidor)
+  servicosVisiveis: 3, // o resto abre em "Ver todos"
+  // Referência geral por tempo (o manual do carro manda)
+  plano: [
+    // [item, meses, KM] — referência geral; o manual do carro manda
+    ['Óleo do motor', 6, 10000], ['Filtro de óleo', 6, 10000], ['Filtro de ar', 12, 10000], ['Filtro de combustível', 12, 10000],
+    ['Filtro de cabine', 12, 10000], ['Óleo de freio', 24, 20000], ['Óleo de câmbio', 48, 40000],
+  ],
+};
+
+/* ---------- ícones (fixos deste arquivo) ---------- */
+const IC = {
+  check: (t = 16, cor = 'currentColor', esp = 2.6) => `<svg width="${t}" height="${t}" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="${cor}" stroke-width="${esp}" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  checkCheio: (t = 20, cor = '#15803D') => `<svg width="${t}" height="${t}" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="${cor}"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  checkBranco: '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#fff"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#15803D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  alerta: '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#D97706"/><path d="M12 7v6M12 16.5v.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>',
+  relogio: '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#D97706"/><path d="M12 7v5l3 2" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>',
+  semRegistro: '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="#A3A3A3" stroke-width="2" stroke-dasharray="3 3"/></svg>',
+  gota: '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c3 4.5 5.5 7.5 5.5 11a5.5 5.5 0 0 1-11 0C6.5 10.5 9 7.5 12 3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+  filtro: '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16l-6 7v6l-4-2v-4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+  correia: '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="18" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M6 8.8h12M6 15.2h12" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
+  freio: '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
+  engrenagem: '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  whats: (t = 20) => `<svg width="${t}" height="${t}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>`,
+  baixar: '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  agenda: '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 10h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  escudo: '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+  indicar: '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 9l5-5 5 5M5 14v5h14v-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  bandeira: '<svg width="7" height="5" viewBox="0 0 20 14" aria-hidden="true"><rect width="20" height="14" fill="#009C3B"/><path d="M10 2l7.5 5L10 12 2.5 7z" fill="#FFDF00"/><circle cx="10" cy="7" r="2.8" fill="#002776"/></svg>',
+};
+
+/* ---------- desenho do carro pelo modelo (silhuetas em traço) ---------- */
+const CH = 118;
+function cr(pts, closed) {
+  // Catmull-Rom -> Bezier; ponto [x,y,t] t=tensão (0 = canto vivo, 1 = suave)
+  const n = pts.length; let d = `M${pts[0][0]} ${pts[0][1]}`;
+  const P = (i) => closed ? pts[(i + n) % n] : pts[Math.max(0, Math.min(n - 1, i))];
+  const last = closed ? n : n - 1;
+  for (let i = 0; i < last; i++) {
+    const p0 = P(i - 1), p1 = P(i), p2 = P(i + 1), p3 = P(i + 2);
+    const t1 = (p1[2] ?? 1) / 6, t2 = (p2[2] ?? 1) / 6;
+    const c1 = [p1[0] + (p2[0] - p0[0]) * t1, p1[1] + (p2[1] - p0[1]) * t1];
+    const c2 = [p2[0] - (p3[0] - p1[0]) * t2, p2[1] - (p3[1] - p1[1]) * t2];
+    d += `C${c1[0].toFixed(1)} ${c1[1].toFixed(1)} ${c2[0].toFixed(1)} ${c2[1].toFixed(1)} ${p2[0]} ${p2[1]}`;
+  }
+  return d + (closed ? 'Z' : '');
+}
+function arco(cx, cy, r, yb, dir) {
+  // arco da caixa de roda; dir 1 = de trás p/ frente (x decrescente)
+  const dx = Math.sqrt(Math.max(0, r * r - (yb - cy) ** 2));
+  return dir ? `L${(cx + dx).toFixed(1)} ${yb}A${r} ${r} 0 1 0 ${(cx - dx).toFixed(1)} ${yb}` : '';
+}
+function roda(cx, R) {
+  const cy = CH - R; let s = '';
+  s += `<circle cx="${cx}" cy="${cy}" r="${R}" class="g"/>`;
+  s += `<circle cx="${cx}" cy="${cy}" r="${(R * .74).toFixed(1)}" class="f"/>`;
+  s += `<circle cx="${cx}" cy="${cy}" r="${(R * .16).toFixed(1)}" class="f"/>`;
+  const ri = R * .17, re = R * .7;
+  for (let i = 0; i < 6; i++) {
+    const a = i * Math.PI / 3 - Math.PI / 2;
+    for (const o of [-.17, .17]) {
+      const a2 = a + o + .22; // raio torcido
+      const x1 = cx + Math.cos(a + o * .6) * ri, y1 = cy + Math.sin(a + o * .6) * ri;
+      const x2 = cx + Math.cos(a2) * re, y2 = cy + Math.sin(a2) * re;
+      s += `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)}L${x2.toFixed(1)} ${y2.toFixed(1)}" class="f"/>`;
+    }
+  }
+  return s;
+}
+function janela(pts, r = 3) {
+  // polígono com cantos arredondados
+  const n = pts.length; let d = '';
+  for (let i = 0; i < n; i++) {
+    const p0 = pts[(i - 1 + n) % n], p = pts[i], p1 = pts[(i + 1) % n];
+    const rr = p[2] ?? r;
+    const v0 = [p0[0] - p[0], p0[1] - p[1]], v1 = [p1[0] - p[0], p1[1] - p[1]];
+    const l0 = Math.hypot(...v0), l1 = Math.hypot(...v1);
+    const k0 = Math.min(rr, l0 / 2) / l0, k1 = Math.min(rr, l1 / 2) / l1;
+    const a = [p[0] + v0[0] * k0, p[1] + v0[1] * k0], b = [p[0] + v1[0] * k1, p[1] + v1[1] * k1];
+    d += (i ? 'L' : 'M') + `${a[0].toFixed(1)} ${a[1].toFixed(1)}Q${p[0]} ${p[1]} ${b[0].toFixed(1)} ${b[1].toFixed(1)}`;
+  }
+  return d + 'Z';
+}
+function silhueta(f) {
+  const R = f.R, yb = f.yb, ra = R + 5;
+  const wf = f.rodas[0], wr = f.rodas[1], cy = CH - R;
+  // contorno: topo (frente-baixo -> traseira-baixo) + base com caixas de roda
+  let d = cr(f.topo, false);
+  const tr = f.topo[f.topo.length - 1], fr = f.topo[0];
+  d += `L${tr[0]} ${yb}` + arco(wr, cy, ra, yb, 1) + arco(wf, cy, ra, yb, 1) + `L${fr[0]} ${yb}Z`;
+  let s = `<path d="${d}" class="c"/>`;
+  // friso das caixas de roda
+  for (const x of [wf, wr]) {
+    const r2 = ra + 3.5, dx = Math.sqrt(r2 * r2 - (yb - 1 - cy) ** 2);
+    s += `<path d="M${(x + dx).toFixed(1)} ${yb - 1}A${r2} ${r2} 0 0 0 ${(x - dx).toFixed(1)} ${yb - 1}" class="f"/>`;
+  }
+  // soleira
+  const s0 = wf + ra + 6, s1 = wr - ra - 6;
+  s += `<path d="M${s0} ${yb - 5}Q${(s0 + s1) / 2} ${yb - 6.5} ${s1} ${yb - 5}" class="f"/>`;
+  if (f.saia !== false) s += `<path d="M${s0 - 3} ${yb - 1}L${s1 + 3} ${yb - 1}" class="f o"/>`;
+  // janelas
+  for (const j of f.janelas) s += `<path d="${janela(j, f.rj ?? 3)}" class="j"/>`;
+  // vinco / linha de cintura
+  if (f.vinco) s += `<path d="${cr(f.vinco, false)}" class="f"/>`;
+  if (f.vinco2) s += `<path d="${cr(f.vinco2, false)}" class="f o"/>`;
+  // portas
+  for (const p of f.portas || []) s += `<path d="${p}" class="f"/>`;
+  // maçanetas
+  for (const [x, y] of f.macanetas || []) s += `<path d="M${x - 6} ${y}h12q2 0 2 1.6t-2 1.6h-12q-2 0-2-1.6t2-1.6z" class="f"/><path d="M${x - 3} ${y + 1.6}h7" class="f o"/>`;
+  // retrovisor
+  if (f.espelho) { const [x, y] = f.espelho; s += `<path d="M${x} ${y}l-2-7q-.5-3 3-3.5h6q4 .5 3.5 4l-1 4q-1 2.5-4 2.5z" class="f"/><path d="M${x + 2} ${y}l1 4" class="f"/>`; }
+  // farol, lanterna, tampa de combustível e extras
+  for (const k of ['farol', 'lanterna', 'extra']) if (f[k]) s += `<path d="${f[k]}" class="f"/>`;
+  if (f.tanque) { const [x, y] = f.tanque; s += `<rect x="${x}" y="${y}" width="11" height="9" rx="2.5" class="f"/>`; }
+  s += roda(wf, R) + roda(wr, R);
+  s += `<path d="M6 ${CH + 1}H394" class="chao"/>`;
+  return s;
+}
+const FAMILIAS = {
+  hatch_pequeno: { nome: 'Hatch pequeno', ex: 'Mobi, Kwid, Up!, Uno, Celta, Palio, Ka',
+    R: 21, yb: 104, rodas: [96, 296],
+    topo: [[42,103,0],[40,88],[43,72],[58,62],[110,55],[124,53,.6],[170,26],[200,22],[276,24],[318,30,.6],[336,42],[343,66],[343,94],[337,103,0]],
+    janelas: [[[132,53],[174,30,8],[208,26,3],[210,51,2]], [[217,50,2],[216,26,3],[262,27,8],[280,47,2]]],
+    vinco: [[50,63],[130,60],[260,56],[341,52]], vinco2: [[132,88],[200,86],[258,84]],
+    portas: ['M130 55C126 72 127 90 132 102','M213 52L211 103','M284 49C282 62 277 70 272 78'],
+    macanetas: [[190,60],[266,57]], espelho: [136,56], tanque: [298,50],
+    farol: 'M43 71L54 64Q68 61 80 63L74 68Q60 72 44 76Z', lanterna: 'M342 46L333 46Q330 52 331 60L342 60Q344 54 342 46Z',
+    extra: 'M41 84Q50 83 56 88L57 97Q49 98 42 96' },
+  hatch_classico: { nome: 'Hatch clássico (quadrado)', ex: 'Uno Mille, Gol quadrado, Corsa antigo, Fiesta antigo', rj: 1.5,
+    R: 20, yb: 104, rodas: [98, 300],
+    topo: [[42,103,0],[40,86],[41,68,.3],[48,61,.3],[116,56,.3],[124,54,0],[160,26,.3],[170,23,0],[304,23,.3],[314,26,.3],[340,52,.3],[348,62,.3],[351,94],[345,103,0]],
+    janelas: [[[131,53],[162,27],[212,26],[213,52]], [[220,52],[220,26],[282,26],[283,52]], [[290,52],[290,26],[304,26],[312,30],[326,50]]],
+    vinco: [[44,63],[200,62],[346,60]], vinco2: [[128,84],[200,84],[262,84]],
+    portas: ['M128 56L130 103','M216 54L215 103','M287 54C287 64 285 72 280 78'],
+    macanetas: [[200,60],[272,58]], espelho: [134,56], tanque: [326,60],
+    farol: 'M41 65H72V73H41Z', lanterna: 'M350 63H338V80H351Z', extra: 'M41 83H60V95H42M74 65V73' },
+  hatch: { nome: 'Hatch', ex: 'Onix, HB20, Gol, Polo, Argo, Sandero, 208, Fox',
+    R: 22, yb: 105, rodas: [92, 310],
+    topo: [[30,104,0],[28,88],[31,70],[48,58],[108,50],[122,48,.6],[172,22],[210,17],[284,19],[328,26,.6],[350,40],[358,62],[359,94],[353,104,0]],
+    janelas: [[[130,49],[174,27,8],[214,22,3],[216,47,2]], [[223,46,2],[222,22,3],[280,23,9],[304,36,3],[300,42,2]]],
+    vinco: [[36,60],[130,57],[260,52],[330,47],[356,46]], vinco2: [[128,90],[210,88],[278,84]],
+    portas: ['M128 51C124 70 125 90 131 103','M219 48L217 104','M306 40C305 56 296 66 290 72'],
+    macanetas: [[198,57],[284,53]], espelho: [134,52], tanque: [320,46],
+    farol: 'M30 68L42 60Q58 56 74 58L68 63Q50 68 31 72Z', lanterna: 'M357 44L345 44Q339 50 339 58L355 58Q359 52 357 44Z',
+    extra: 'M29 82Q38 81 44 86L46 96Q37 97 30 95' },
+  sedan_compacto: { nome: 'Sedã compacto', ex: 'Onix Plus, HB20S, Virtus, Voyage, Logan, Cronos, Prisma',
+    R: 22, yb: 105, rodas: [86, 296],
+    topo: [[22,104,0],[20,88],[23,70],[40,58],[102,50],[116,48,.6],[166,22],[204,17],[260,19],[304,33],[338,37],[376,34,.4],[382,46,.5],[386,70],[385,94],[378,104,0]],
+    janelas: [[[124,49],[168,27,8],[208,22,3],[210,47,2]], [[217,47,2],[216,22,3],[256,23,10],[288,37,3],[294,43,2]]],
+    vinco: [[28,60],[124,57],[260,52],[340,48],[382,48]], vinco2: [[122,90],[200,88],[272,84]],
+    portas: ['M122 51C118 70 119 90 125 103','M213 48L211 104','M298 43C297 58 288 68 277 72'],
+    macanetas: [[192,57],[274,53]], espelho: [128,52], tanque: [318,50],
+    farol: 'M22 68L34 60Q50 56 66 58L60 63Q42 68 23 72Z', lanterna: 'M384 47L370 48Q360 51 355 57L372 58Q382 57 386 55Z',
+    extra: 'M21 82Q30 81 36 86L38 96Q29 97 22 95' },
+  sedan_medio: { nome: 'Sedã médio', ex: 'Corolla, Civic, Cruze, Jetta, Sentra, City',
+    R: 24, yb: 105, rodas: [80, 312],
+    topo: [[14,104,0],[12,88],[15,68],[32,54],[98,45],[114,43,.6],[168,17],[212,12],[264,15],[306,30],[334,35],[378,30,.4],[385,42,.5],[391,68],[390,94],[383,104,0]],
+    janelas: [[[121,50],[167,24,8],[208,19,3],[210,48,2]], [[217,47,2],[216,19,3],[262,20,10],[292,36,4],[300,42,2],[270,45,3]]],
+    vinco: [[30,58],[120,55],[250,51],[330,46],[382,44]], vinco2: [[122,88],[200,86],[280,82]],
+    portas: ['M120 52C116 70 117 90 123 103','M212 49L210 104','M302 43C302 60 291 72 285 80Q279 90 280 103'],
+    macanetas: [[190,59],[282,54]], espelho: [127,53], tanque: [322,48],
+    farol: 'M15 66L27 59Q45 55 60 57L55 62Q38 67 17 72Z', lanterna: 'M389 45L374 47Q362 50 355 56L373 57Q383 56 390 54Z',
+    extra: 'M14 80Q22 79 28 84L30 96Q22 97 15 95' },
+  suv_compacto: { nome: 'SUV compacto', ex: 'Creta, T-Cross, Kicks, Tracker, HR-V, Renegade, Pulse, Nivus, 2008',
+    R: 24, yb: 100, rodas: [90, 302],
+    topo: [[26,99,0],[24,84],[26,64],[40,50],[104,42],[120,40,.6],[166,16],[200,12],[300,13],[340,18,.6],[358,30],[368,52],[371,88],[364,99,0]],
+    janelas: [[[128,41],[168,20,8],[212,17,3],[214,40,2]], [[221,40,2],[220,17,3],[288,17,4],[290,39,2]], [[296,38,2],[295,17,3],[318,18,6],[330,30,2],[332,36,2]]],
+    vinco: [[32,52],[130,48],[260,44],[350,40],[368,40]], vinco2: [[126,82],[210,80],[278,77]],
+    portas: ['M126 43C122 62 123 84 128 98','M217 41L215 99','M292 40C293 56 288 64 280 70'],
+    macanetas: [[196,50],[284,47]], espelho: [132,44], tanque: [318,46],
+    farol: 'M26 60L40 52Q56 49 72 51L66 56Q46 60 27 64Z', lanterna: 'M369 40L356 40Q350 46 350 54L367 54Q371 48 369 40Z',
+    extra: 'M25 76Q34 75 40 80L42 92Q33 93 26 91M178 13Q180 9 188 9H304Q311 9 313 13' },
+  suv_medio: { nome: 'SUV médio / grande', ex: 'Compass, Commander, SW4, Trailblazer, Tucson, Tiguan, Pajero',
+    R: 25, yb: 99, rodas: [86, 316],
+    topo: [[16,98,0],[14,82],[16,62],[30,46],[100,38],[118,36,.6],[160,13],[192,9],[318,9],[356,13,.6],[372,24],[380,48],[382,88],[376,98,0]],
+    janelas: [[[126,37],[164,17,8],[210,14,3],[212,36,2]], [[219,36,2],[218,14,3],[290,14,4],[292,35,2]], [[298,35,2],[297,14,3],[340,14,6],[352,24,3],[354,33,2]]],
+    vinco: [[22,48],[130,44],[270,40],[360,36],[380,36]], vinco2: [[124,80],[210,78],[288,75]],
+    portas: ['M124 39C120 60 121 82 126 97','M215 37L213 98','M295 36C296 54 294 64 288 72'],
+    macanetas: [[194,46],[284,43]], espelho: [130,40], tanque: [336,42],
+    farol: 'M16 56L30 48Q48 45 66 47L60 52Q40 56 17 60Z', lanterna: 'M381 36L368 36Q362 42 362 52L379 52Q383 44 381 36Z',
+    extra: 'M15 72Q25 71 31 76L33 90Q24 91 16 89M168 10Q170 6 178 6H330Q337 6 339 10' },
+  minivan: { nome: 'Minivan', ex: 'Spin, Meriva, Zafira, Idea, Livina, Fit',
+    R: 22, yb: 103, rodas: [90, 300],
+    topo: [[24,102,0],[22,86],[25,68],[40,56],[86,50],[100,47,.6],[148,16],[176,10],[316,10],[350,14,.6],[364,26],[370,52],[372,92],[366,102,0]],
+    janelas: [[[108,48],[150,20,8],[196,15,3],[198,45,2]], [[205,45,2],[204,15,3],[272,15,4],[274,43,2]], [[280,43,2],[279,15,3],[330,15,8],[350,26,3],[352,40,2]]],
+    vinco: [[30,58],[110,55],[260,50],[360,46],[370,46]], vinco2: [[110,86],[200,84],[270,80]],
+    portas: ['M106 50C102 70 103 88 108 101','M201 46L199 102','M277 44C278 60 278 70 274 78'],
+    macanetas: [[180,54],[266,52]], espelho: [112,51], tanque: [314,50],
+    farol: 'M24 66L36 58Q50 54 64 56L58 61Q42 66 25 70Z', lanterna: 'M369 42L358 42Q353 48 353 58L368 58Q371 50 369 42Z',
+    extra: 'M23 80Q32 79 38 84L40 95Q31 96 24 94' },
+  picape_pequena: { nome: 'Picape pequena', ex: 'Strada, Saveiro, Montana, Courier',
+    R: 23, yb: 101, rodas: [86, 300],
+    topo: [[20,100,0],[18,85],[21,66],[36,54],[100,46],[116,44,.6],[162,19],[196,15],[248,15,.5],[256,20,.3],[258,44,0],[386,44,0],[388,60],[388,90],[382,100,0]],
+    janelas: [[[124,45],[164,23,8],[204,19,3],[206,43,2]], [[213,43,2],[212,19,3],[244,19,4],[248,40,2]]],
+    vinco: [[26,56],[124,53],[256,48]], vinco2: [[266,62],[320,61],[380,60]],
+    portas: ['M122 47C118 66 119 86 124 99','M209 44L207 100','M253 42L253 99'],
+    macanetas: [[188,52],[244,50]], espelho: [128,48], tanque: [272,52],
+    farol: 'M20 64L32 56Q48 52 64 54L58 59Q40 64 21 68Z', lanterna: 'M387 48L380 48Q378 54 378 62L387 62Z',
+    extra: 'M19 80Q28 79 34 84L36 94Q27 95 20 93M262 46V98M380 48V94' },
+  picape_media: { nome: 'Picape média', ex: 'Hilux, S10, Ranger, Amarok, Toro, Frontier, L200',
+    R: 26, yb: 96, rodas: [82, 306],
+    topo: [[14,95,0],[12,78],[14,58],[28,44],[96,36],[114,34,.6],[154,12],[188,8],[262,8,.5],[270,13,.3],[272,40,0],[390,40,0],[392,56],[392,86],[386,95,0]],
+    janelas: [[[122,35],[158,16,8],[204,12,3],[206,33,2]], [[213,33,2],[212,12,3],[256,12,4],[262,31,2]]],
+    vinco: [[20,46],[120,43],[268,38]], vinco2: [[280,56],[330,55],[384,54]],
+    portas: ['M120 37C116 58 117 80 122 94','M209 34L207 95','M266 33L266 94'],
+    macanetas: [[188,42],[254,40]], espelho: [126,38], tanque: [288,48],
+    farol: 'M14 54L28 46Q46 42 64 44L58 49Q38 54 15 58Z', lanterna: 'M391 44L382 44Q380 50 380 60L391 60Z',
+    extra: 'M13 72Q23 71 29 76L31 88Q22 89 14 87M276 42V94M384 44V90M118 101H268' },
+  furgao: { nome: 'Furgão pequeno', ex: 'Fiorino, Kangoo, Partner, Doblò Cargo, Berlingo',
+    R: 22, yb: 104, rodas: [92, 304],
+    topo: [[26,103,0],[24,87],[27,69],[42,57],[96,50],[110,48,.6],[150,22],[176,17],[198,16,.4],[204,7,.4],[214,4],[370,4,.4],[376,10,.5],[378,40],[380,92],[374,103,0]],
+    janelas: [[[118,49],[154,24,8],[194,20,3],[196,46,2]]],
+    vinco: [[32,59],[118,56],[200,53],[376,50]], vinco2: [[118,88],[190,86]],
+    portas: ['M116 51C112 70 113 90 118 102','M200 48L199 103'],
+    macanetas: [[176,56]], espelho: [122,52], tanque: [216,56],
+    farol: 'M26 67L38 59Q52 55 66 57L60 62Q44 67 27 71Z', lanterna: 'M379 44L371 44Q370 52 370 62L379 62Z',
+    extra: 'M25 81Q34 80 40 85L42 96Q33 97 26 95M204 12V100M370 10V98' },
+  van: { nome: 'Van', ex: 'Ducato, Sprinter, Master, Boxer, Daily, Transit, Kombi',
+    R: 23, yb: 100, rodas: [74, 300],
+    topo: [[16,99,0],[14,82],[16,62],[26,50],[56,44],[70,40,.5],[100,12],[118,4],[384,4,.4],[390,10,.5],[390,92],[384,99,0]],
+    janelas: [[[76,40],[104,14,6],[134,10,3],[136,40,2]]],
+    vinco: [[22,52],[80,50],[388,46]], vinco2: [[80,82],[200,80],[266,78]],
+    portas: ['M74 42C70 62 72 84 78 98','M140 10L140 99'],
+    macanetas: [[124,52],[196,52]], espelho: [82,44], tanque: [160,60],
+    farol: 'M16 58L26 50Q40 47 52 49L46 54Q32 58 17 62Z', lanterna: 'M389 46L382 46V66H389Z',
+    extra: 'M15 76Q24 75 30 80L32 92Q23 93 16 91M186 8V99M380 8V96M190 36H266' },
+};
+const ARTIGO = {"hatch_pequeno": "um hatch pequeno", "hatch_classico": "um hatch clássico", "hatch": "um carro hatch", "sedan_compacto": "um sedã compacto", "sedan_medio": "um sedã médio", "suv_compacto": "um SUV compacto", "suv_medio": "um SUV médio", "minivan": "uma minivan", "picape_pequena": "uma picape pequena", "picape_media": "uma picape média", "furgao": "um furgão", "van": "uma van"};
+// a ordem importa: o primeiro que casar vence ("corolla cross" é SUV antes de "corolla" ser sedã)
+const TIPOS = [
+  ['van', /ducato|sprinter|master|boxer|jumper|daily|transit|kombi|trafic|(?<![\w-])hr(?![\w-])|bongo|\bvan\b|micro-?onibus/],
+  ['furgao', /fiorino|kangoo|partner|berlingo|doblo cargo|expert|furg/],
+  ['suv_medio', /compass|commander|sw4|trailblazer|tucson|ix35|sportage|tiguan|pajero|outlander|rav ?4|territory|equinox|taos|tiggo ?[78]|grand vitara|santa fe|sorento|cr-?v|x-?trail|3008|5008|captiva|blazer|land cruiser|discovery/],
+  ['picape_media', /hilux|\bs-?10\b|ranger|amarok|frontier|l200|triton|toro|maverick|rampage|\bd-?20\b|f-?250|\bram\b|dakota|caminhonete/],
+  ['picape_pequena', /strada|saveiro|montana|oroch|courier|picape|pick-?up/],
+  ['suv_compacto', /corolla cross|renegade|creta|hr-?v|wr-?v|kicks|t-?cross|tracker|ecosport|duster|captur|pulse|fastback|tiggo|nivus|\b2008\b|jimny|asx|aircross|kardian|bronco|\bsuv\b/],
+  ['minivan', /spin|meriva|zafira|\bidea\b|livina|\bfit\b|doblo|picasso|scenic|xsara|carens|minivan/],
+  ['sedan_medio', /corolla|civic|cruze|jetta|sentra|fusion|camry|accord|elantra|cerato|vectra|focus sedan|astra sedan|passat|azera|lancer|altima|optima|sedan medio/],
+  ['sedan_compacto', /onix plus|hb20s|virtus|voyage|logan|cronos|prisma|versa|siena|ka sedan|ka\+|\bcity\b|yaris sedan|etios sedan|fiesta sedan|polo sedan|cobalt|classic|linea|corsa sedan|sedan|seda/],
+  ['hatch_classico', /uno|mille|gol (quadrado|bola|g1|g2|1000|cl|gl)|chevette|escort|corsa wind|fiesta street|\bfusca\b|brasilia|monza|parati/],
+  ['hatch_pequeno', /mobi|kwid|\bup\b|celta|palio|\bka\b|clio|picanto|\bqq\b|march|i10|agile/],
+  ['hatch', /./],
+];
+function tipoDoModelo(modelo) {
+  const m = String(modelo || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  for (const [tipo, re] of TIPOS) if (re.test(m)) return tipo;
+  return 'hatch';
+}
+function desenhoCarro(modelo) {
+  const tipo = tipoDoModelo(modelo);
+  const NS = 'http://www.w3.org/2000/svg';
+  const s = document.createElementNS(NS, 'svg');
+  s.setAttribute('viewBox', '0 0 400 124'); s.setAttribute('class', 'desenho');
+  s.setAttribute('role', 'img'); s.setAttribute('aria-label', 'Desenho de ' + ARTIGO[tipo]);
+  s.dataset.tipo = tipo;
+  s.innerHTML = silhueta(FAMILIAS[tipo]);
+  return s;
+}
+
+/* ---------- ajudantes ---------- */
+const app = document.getElementById('app');
+const params = new URLSearchParams(location.search);
+const codigo = (params.get('c') || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+function el(tag, attrs, ...filhos) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === null || v === undefined || v === false) continue;
+    if (k === 'class') n.className = v;
+    else if (k === 'html') n.innerHTML = v; // só ícones fixos deste arquivo
+    else if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v);
+  }
+  for (const f of filhos.flat(Infinity)) if (f !== null && f !== undefined && f !== false) n.append(f);
+  return n;
+}
+const icone = (svg, extra) => el('span', Object.assign({ html: svg, style: 'display:inline-flex' }, extra || {}));
+const milhar = (n) => Number(n).toLocaleString('pt-BR');
+const km = (n) => milhar(n) + ' km';
+function dataBR(iso) { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? `${m[3]}/${m[2]}/${m[1]}` : ''; }
+const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+function dataCurta(iso) { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? `${m[3]} ${MESES[+m[2] - 1]} ${m[1]}` : 'Data não informada'; }
+function dataDe(iso) { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3], 12) : null; }
+function maisMeses(d, n) { const x = new Date(d); const dia = x.getDate(); x.setMonth(x.getMonth() + n); if (x.getDate() < dia) x.setDate(0); return x; }
+function maisDias(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const brDe = (d) => dataBR(iso(d));
+function mesesDesde(d) { const h = new Date(); let m = (h.getFullYear() - d.getFullYear()) * 12 + h.getMonth() - d.getMonth(); if (h.getDate() < d.getDate()) m--; return Math.max(0, m); }
+function haQuanto(d) {
+  const m = mesesDesde(d);
+  if (m >= 12) { const a = Math.floor(m / 12); return `há ${a} ano${a > 1 ? 's' : ''}${m % 12 ? ` e ${m % 12} ${m % 12 > 1 ? 'meses' : 'mês'}` : ''}`; }
+  if (m >= 1) return `há ${m} ${m > 1 ? 'meses' : 'mês'}`;
+  const dias = Math.round((Date.now() - d) / 864e5);
+  return dias <= 0 ? 'hoje' : dias === 1 ? 'ontem' : `há ${dias} dias`;
+}
+function faltam(d) {
+  const dias = Math.ceil((d - Date.now()) / 864e5);
+  if (dias <= 0) return null;
+  if (dias < 45) return [String(dias), dias === 1 ? 'dia' : 'dias'];
+  const m = Math.round(dias / 30.4);
+  return [String(m), m === 1 ? 'mês' : 'meses'];
+}
+function linkWhats(texto) { return `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(texto)}`; }
+// estado pela fração do prazo já passada
+const estadoDe = (frac) => (frac >= 1 ? 'atrasada' : frac >= 0.8 ? 'perto' : 'ok');
+
+/* ---------- placa Mercosul ---------- */
+function placa(p) {
+  return el('span', { class: 'placa', role: 'img', 'aria-label': 'Placa ' + p.split('').join(' ') },
+    el('span', { class: 'faixa' }, el('span', {}, 'BRASIL'), icone(IC.bandeira)),
+    el('span', { class: 'letras' }, p));
+}
+
+/* ---------- partes da página ---------- */
+function heroi(v, estadoGeral) {
+  const titulos = { ok: 'Revisão em dia', perto: 'Troca chegando', atrasada: 'Manutenção atrasada' };
+  return el('section', { class: 'heroi' }, el('div', { class: 'heroi-in' },
+    el('div', { class: 'heroi-topo' },
+      el('img', { class: 'logo', src: 'logo-escura.png', alt: 'Auto Mecânica Itabaiana — Peças e Serviços', width: 900, height: 411 }),
+      el('a', { class: 'redondo', href: linkWhats(`Olá! Vim pela página do histórico do ${v.modelo || 'meu carro'} (código ${codigo}).`), target: '_blank', rel: 'noopener', 'aria-label': 'Falar com a oficina no WhatsApp', html: IC.whats(20) })),
+    estadoGeral ? el('span', { class: 'selo-topo ' + estadoGeral, role: 'status' }, titulos[estadoGeral]) : null,
+    desenhoCarro(v.modelo),
+    el('h1', { id: 'veiculo' }, v.modelo || 'Seu veículo'),
+    el('div', { class: 'meta' }, ...[v.ano ? el('span', {}, v.ano) : null, v.km ? el('span', {}, km(v.km)) : null, v.placa ? placa(v.placa) : null]
+      .filter(Boolean).flatMap((x, i) => i ? [el('span', { class: 'ponto', 'aria-hidden': 'true' }), x] : [x]))));
+}
+
+function anel(frac, centro, rotulo, cor) {
+  const C = 2 * Math.PI * 52;
+  const NS = 'http://www.w3.org/2000/svg';
+  const s = document.createElementNS(NS, 'svg');
+  s.setAttribute('width', '124'); s.setAttribute('height', '124'); s.setAttribute('viewBox', '0 0 124 124'); s.setAttribute('aria-hidden', 'true');
+  const c1 = document.createElementNS(NS, 'circle');
+  Object.entries({ cx: 62, cy: 62, r: 52, fill: 'none', stroke: '#EEEEEB', 'stroke-width': 12 }).forEach(([k, x]) => c1.setAttribute(k, x));
+  const c2 = document.createElementNS(NS, 'circle');
+  Object.entries({ cx: 62, cy: 62, r: 52, fill: 'none', stroke: cor, 'stroke-width': 12, 'stroke-linecap': 'round',
+    'stroke-dasharray': `${Math.max(0.001, Math.min(1, frac)) * C} ${C}`, transform: 'rotate(-90 62 62)' }).forEach(([k, x]) => c2.setAttribute(k, x));
+  s.append(c1, c2);
+  return el('div', { class: 'anel' }, s, el('div', { class: 'meio' }, el('strong', {}, centro), el('span', {}, rotulo)));
+}
+
+function ics(nome, quando) {
+  const d = iso(quando).replace(/-/g, '');
+  const fim = iso(maisDias(quando, 1)).replace(/-/g, '');
+  const agora = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
+  const url = `${CONFIG.site}?c=${codigo}`;
+  const esc = (t) => t.replace(/([,;\\])/g, '\\$1');
+  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Auto Mecanica Itabaiana//Historico//PT', 'CALSCALE:GREGORIAN', 'BEGIN:VEVENT',
+    `UID:troca-${codigo}-${d}@automec135.github.io`, `DTSTAMP:${agora}`, `DTSTART;VALUE=DATE:${d}`, `DTEND;VALUE=DATE:${fim}`,
+    `SUMMARY:${esc('Troca de óleo — ' + nome)}`,
+    `DESCRIPTION:${esc(`${CONFIG.oficina} — WhatsApp ${CONFIG.telefone}. Histórico do carro: ${url}`)}`,
+    'BEGIN:VALARM', 'TRIGGER:-P1D', 'ACTION:DISPLAY', `DESCRIPTION:${esc('Amanhã: troca de óleo do ' + nome)}`, 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+}
+function botoesLembrete(nome, prazo) {
+  const quando = prazo < new Date() ? maisDias(new Date(), 2) : prazo;
+  const baixarIcs = el('button', { class: 'botao claro', type: 'button', onclick: () => {
+    const blob = new Blob([ics(nome, quando)], { type: 'text/calendar;charset=utf-8' });
+    const a = el('a', { href: URL.createObjectURL(blob), download: 'troca-de-oleo.ics' });
+    document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  } }, icone(IC.agenda), 'Me lembre da próxima troca');
+  const d = iso(quando).replace(/-/g, ''), fim = iso(maisDias(quando, 1)).replace(/-/g, '');
+  const google = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Troca de óleo — ' + nome)}&dates=${d}/${fim}&details=${encodeURIComponent(`${CONFIG.oficina} — WhatsApp ${CONFIG.telefone}. Histórico: ${CONFIG.site}?c=${codigo}`)}`;
+  return el('div', { class: 'lembrete', style: 'display:flex;flex-direction:column;gap:8px;align-items:center' }, baixarIcs,
+    el('a', { class: 'link', href: google, target: '_blank', rel: 'noopener' }, 'ou na Agenda do Google'));
+}
+
+// cartão da próxima troca de óleo (ou do último serviço, se não houver troca de óleo)
+function cartaoProxima(nome, servicos, oleo) {
+  const c = el('section', { class: 'cartao flutua', 'aria-labelledby': 'tit-prox' });
+  if (!oleo) {
+    const u = servicos[0];
+    c.append(el('div', { class: 'linha-tit' }, el('h2', { id: 'tit-prox' }, 'Último serviço')),
+      u ? el('p', { class: 'nota' }, 'Feito em ', el('strong', {}, dataBR(u.data) || '—'), u.km ? [', com ', el('strong', {}, km(u.km))] : null, '.')
+        : el('p', { class: 'nota' }, 'Ainda não há serviços registrados para este veículo.'),
+      el('a', { class: 'botao', href: linkWhats(`Olá! Quero agendar um serviço para o meu ${nome} (código ${codigo}).`), target: '_blank', rel: 'noopener' }, icone(IC.whats()), 'Agendar pelo WhatsApp'));
+    return c;
+  }
+  const { prazo, frac, estado, proxKm, kmAtual } = oleo;
+  const f = faltam(prazo);
+  const restKm = proxKm && kmAtual ? proxKm - kmAtual : null;
+  // número grande: KM que faltam; sem KM, o tempo que falta
+  let grande, legenda, curto = false;
+  if (estado === 'atrasada') { grande = 'Vencida'; legenda = 'desde ' + brDe(prazo); curto = true; }
+  else if (restKm !== null && restKm <= 0) { grande = 'Chegou'; legenda = 'o KM da troca'; curto = true; }
+  else if (restKm !== null) { grande = milhar(restKm); legenda = 'km restantes'; }
+  else { grande = f ? f[0] : '0'; legenda = (f ? f[1] : 'dias') + ' restantes'; }
+  const cheios = estado === 'atrasada' ? 10 : Math.max(1, Math.min(10, Math.round(frac * 10)));
+  c.append(
+    el('div', { class: 'linha-tit' }, el('h2', { id: 'tit-prox' }, 'Próxima troca de óleo'),
+      el('span', { class: 'quando ' + estado }, f ? `em ${f[0]} ${f[1]}` : 'Atrasada')),
+    el('div', { class: 'restam' }, el('strong', { class: curto ? 'curto' : null }, grande), el('span', {}, legenda)),
+    el('div', { class: 'segmentos ' + estado, role: 'img', 'aria-label': `${cheios * 10}% do prazo da troca já passou` },
+      Array.from({ length: 10 }, (_, i) => el('span', { class: i < cheios ? 'cheio' : null }))),
+    el('div', { class: 'blocos' },
+      proxKm ? el('div', {}, el('span', {}, 'Aos'), el('strong', { class: 'prox-km' }, km(proxKm))) : null,
+      el('div', {}, el('span', {}, proxKm ? 'Ou até' : 'Até'), el('strong', { class: 'prox-data' }, brDe(prazo)))),
+    el('a', { class: 'botao', href: linkWhats(estado === 'ok'
+      ? `Olá! Quero agendar um serviço para o meu ${nome} (código ${codigo}).`
+      : `Olá! Quero agendar a troca de óleo do meu ${nome} (código ${codigo}).`), target: '_blank', rel: 'noopener' },
+      icone(IC.whats()), estado === 'ok' ? 'Agendar pelo WhatsApp' : 'Agendar a troca pelo WhatsApp'),
+    botoesLembrete(nome, prazo));
+  return c;
+}
+
+function linhasDoServico(s) {
+  const l = [...(s.itens || [])];
+  for (const o of String(s.outros || '').split('\n')) if (o.trim()) l.push(o.trim());
+  return l;
+}
+
+function garantiaInfo(s) {
+  const d = dataDe(s.data);
+  if (!d) return null;
+  const fim = maisDias(d, CONFIG.diasGarantia);
+  const resta = Math.ceil((fim - Date.now()) / 864e5);
+  return { fim, resta, valendo: resta > 0, soMao: s.garantia === 'mao_de_obra',
+    frac: Math.min(1, Math.max(0, resta / CONFIG.diasGarantia)) };
+}
+
+function cartaoFeito(s) {
+  const g = garantiaInfo(s);
+  const linhas = linhasDoServico(s);
+  return el('section', { class: 'cartao feito', 'aria-labelledby': 'tit-feito' },
+    el('div', { class: 'linha-tit' },
+      el('div', {}, el('span', {}, 'Última visita'), el('h2', { id: 'tit-feito' }, 'Serviço concluído')),
+      el('span', { class: 'marca', html: '<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>' })),
+    linhas.length ? el('ul', {}, linhas.map((t) => el('li', {}, icone(IC.checkBranco), el('span', {}, t)))) : null,
+    s.obs ? el('div', { class: 'obs' }, s.obs) : null,
+    g ? el('div', { style: 'display:flex;flex-direction:column;gap:8px' },
+      el('div', { class: 'gar' }, el('span', { style: 'display:inline-flex;align-items:center;gap:6px' }, icone(IC.escudo),
+        g.valendo ? (g.soMao ? 'Garantia da mão de obra' : 'Garantia valendo') : 'Garantia terminou'),
+        el('span', {}, (g.valendo ? 'até ' : 'em ') + brDe(g.fim))),
+      g.valendo ? el('div', { class: 'garantia-barra', role: 'img', 'aria-label': `faltam ${g.resta} dias de garantia` }, el('span', { style: `width:${Math.round(g.frac * 100)}%` })) : null,
+      el('div', { class: 'pe' }, [dataBR(s.data), s.km ? km(s.km) : '', g.valendo ? `faltam ${g.resta} dias de garantia` : '',
+        g.soMao ? 'peça trazida pelo cliente' : ''].filter(Boolean).join(' · '))) : null);
+}
+
+// saúde do carro: cada item do plano + correia dentada
+function saude(servicos, oleo, correia) {
+  const itens = CONFIG.plano.map(([item, meses, kmIntervalo]) => {
+    if (item === 'Óleo do motor' && oleo) {
+      return { nome: item, ic: IC.gota, estado: oleo.estado === 'atrasada' ? 'verificar' : oleo.estado,
+        quando: oleo.estado === 'atrasada' ? 'troca atrasada' : 'até ' + brDe(oleo.prazo), km: oleo.proxKm };
+    }
+    const s = servicos.find((x) => (x.itens || []).includes(item));
+    const d = s && dataDe(s.data);
+    const ic = /Filtro/.test(item) ? IC.filtro : /freio/.test(item) ? IC.freio : /câmbio/.test(item) ? IC.engrenagem : IC.gota;
+    if (!d) return { nome: item, ic, estado: 'sem', quando: 'sem registro aqui' };
+    const m = mesesDesde(d);
+    const estado = m >= meses ? 'verificar' : m >= meses * 0.8 ? 'perto' : 'ok';
+    // filtro de óleo trocado junto com o óleo segue o KM do óleo
+    const proxKm = item === 'Filtro de óleo' && oleo && oleo.proxKm && (s.itens || []).includes('Óleo do motor') ? oleo.proxKm
+      : s.km ? s.km + kmIntervalo : null;
+    return { nome: item, ic, estado, quando: (estado === 'verificar' ? 'venceu em ' : 'até ') + brDe(maisMeses(d, meses)), km: proxKm };
+  });
+  if (correia) itens.splice(1, 0, { nome: 'Correia dentada', ic: IC.correia, estado: correia.estado === 'atrasada' ? 'verificar' : correia.estado,
+    quando: (correia.estado === 'atrasada' ? 'vencida desde ' : 'até ') + brDe(correia.prazo), km: correia.proxKm });
+  const sinal = { ok: [IC.checkCheio(20), 'em dia'], perto: [IC.relogio, 'chegando'], verificar: [IC.alerta, 'verificar'], sem: [IC.semRegistro, 'sem registro'] };
+  return el('section', { class: 'secao', 'aria-labelledby': 'tit-saude' },
+    el('h2', { id: 'tit-saude' }, 'Saúde do carro'),
+    el('p', { class: 'ref' }, 'O que vier primeiro: o KM ou a data. É uma referência geral — o manual do seu carro manda; na dúvida, fale com a gente.'),
+    el('ul', { class: 'saude' }, itens.map((i) => el('li', { class: i.estado },
+      el('span', { class: 'cab' }, icone(i.ic), icone(sinal[i.estado][0], { role: 'img', 'aria-label': sinal[i.estado][1] })),
+      el('strong', {}, i.nome),
+      i.km ? el('span', { class: 'km' }, 'Aos ', el('b', {}, km(i.km))) : null,
+      el('span', { class: 'q' }, i.km && /^até /.test(i.quando) ? 'ou ' + i.quando : i.quando)))));
+}
+
+function linhaDoTempo(servicos) {
+  const sec = el('section', { class: 'secao historico', 'aria-labelledby': 'tit-hist' });
+  if (!servicos.length) {
+    sec.append(el('h2', { id: 'tit-hist' }, 'Serviços feitos'), el('p', { class: 'vazio-hist' }, 'Ainda não há serviços registrados para este veículo.'));
+    return sec;
+  }
+  const lista = el('ol', { class: 'tempo' }, servicos.map((s, i) => {
+    const g = garantiaInfo(s);
+    return el('li', { class: [(s.itens || []).includes('Óleo do motor') ? 'oleo' : '', i >= CONFIG.servicosVisiveis ? 'escondido' : ''].filter(Boolean).join(' ') || null,
+      hidden: i >= CONFIG.servicosVisiveis ? '' : null },
+      el('div', { class: 'trilho' }, el('span', { class: 'bola', html: IC.check(16) }), el('span', { class: 'fio' })),
+      el('article', {},
+        el('div', { class: 'quando' }, el('strong', {}, el('time', { datetime: s.data }, dataCurta(s.data))), s.km ? el('span', {}, km(s.km)) : null),
+        el('ul', { class: 'chips', 'aria-label': 'O que foi feito' }, linhasDoServico(s).map((t) => el('li', {}, icone(IC.check(13)), t))),
+        s.obs ? el('p', { class: 'obs' }, 'Obs.: ' + s.obs) : null,
+        g ? el('p', { class: 'gar' + (g.valendo ? ' valendo' : '') },
+          g.valendo ? `✓ Garantia de ${CONFIG.diasGarantia} dias${g.soMao ? ' da mão de obra (peça fornecida pelo cliente)' : ''}: até ${brDe(g.fim)}`
+            : `Garantia de ${CONFIG.diasGarantia} dias${g.soMao ? ' da mão de obra (peça fornecida pelo cliente)' : ''} terminou em ${brDe(g.fim)}`) : null));
+  }));
+  sec.append(el('div', { class: 'linha-tit', style: 'margin-bottom:12px' }, el('h2', { id: 'tit-hist', style: 'margin:0' }, 'Serviços feitos'),
+    el('span', { style: 'font-size:14px;color:var(--cinza)' }, `${servicos.length} no total`)), lista);
+  if (servicos.length > CONFIG.servicosVisiveis) {
+    const b = el('button', { class: 'botao claro mais', type: 'button', 'aria-expanded': 'false' }, `Ver todos os ${servicos.length} serviços`);
+    b.addEventListener('click', () => {
+      const abrir = b.getAttribute('aria-expanded') !== 'true';
+      lista.querySelectorAll('li.escondido').forEach((li) => { li.hidden = !abrir; });
+      b.setAttribute('aria-expanded', String(abrir));
+      b.textContent = abrir ? 'Mostrar menos' : `Ver todos os ${servicos.length} serviços`;
+    });
+    sec.append(b);
+  }
+  return sec;
+}
+
+function acoes(nome) {
+  const pdf = el('button', { class: 'botao claro', type: 'button', onclick: () => {
+    document.querySelectorAll('.tempo li.escondido').forEach((li) => { li.hidden = false; });
+    window.print();
+  } }, icone(IC.baixar), 'Baixar histórico (PDF)');
+  const texto = `Recomendo a ${CONFIG.oficina}, em Itabaiana-SE. Fazem a manutenção e deixam todo o histórico do carro no celular, pelo QR Code. Localização: ${CONFIG.googleMapa}`;
+  const indicar = el('button', { class: 'botao claro', type: 'button', onclick: async () => {
+    if (navigator.share) { try { await navigator.share({ title: CONFIG.oficina, text: texto }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+    window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank', 'noopener');
+  } }, icone(IC.indicar), 'Indicar a oficina');
+  return el('section', { class: 'duas acoes' }, pdf, indicar);
+}
+
+function avaliar() {
+  return el('section', { class: 'cartao avaliar' },
+    el('span', { class: 'estrelas', 'aria-hidden': 'true' }, '★★★★★'),
+    el('strong', {}, 'Gostou do atendimento?'),
+    el('p', {}, 'Sua avaliação ajuda outras pessoas de Itabaiana a encontrar a oficina. Leva menos de um minuto.'),
+    el('a', { class: 'botao', href: CONFIG.googleAvaliar, target: '_blank', rel: 'noopener' }, 'Avaliar no Google'));
+}
+
+function rodape(atualizadoEm) {
+  const at = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(atualizadoEm || '');
+  return el('footer', { class: 'rodape', id: 'rodape' },
+    el('img', { src: 'logo.png', alt: '', width: 900, height: 411 }),
+    el('p', {}, `Itabaiana – SE · ${CONFIG.telefone} · `, el('a', { href: `https://instagram.com/${CONFIG.instagram}`, target: '_blank', rel: 'noopener' }, '@' + CONFIG.instagram)),
+    el('p', {}, 'Histórico registrado pela oficina' + (at ? ` · atualizado em ${at[3]}/${at[2]}/${at[1]}, às ${at[4]}:${at[5]}` : '') + '.'),
+    codigo ? el('span', { class: 'codigo' }, 'Código do histórico ', el('strong', {}, codigo)) : null);
+}
+
+function certificado(nome, ano) {
+  return el('section', { class: 'cert', 'aria-hidden': 'true' },
+    el('h2', {}, 'Histórico de manutenção'),
+    el('p', {}, `${nome}${ano ? ' ' + ano : ''} — serviços feitos na ${CONFIG.oficina}, Itabaiana-SE.`),
+    el('p', {}, `Emitido em ${brDe(new Date())}. Código de verificação: `, el('strong', {}, codigo),
+      ` — confira a qualquer momento em ${CONFIG.site.replace(/^https:\/\//, '')}?c=${codigo}`));
+}
+
+/* ---------- telas ---------- */
+function telaMensagem(titulo, texto, extra) {
+  app.replaceChildren(
+    heroi({ modelo: '' }, null),
+    el('div', { class: 'conteudo' },
+      el('section', { class: 'cartao flutua msg' }, el('h2', {}, titulo), el('p', {}, texto), extra || null,
+        el('a', { class: 'botao', href: linkWhats('Olá! Vim pela página do histórico do veículo.'), target: '_blank', rel: 'noopener' }, icone(IC.whats()), 'Falar com a oficina'))),
+    rodape(''));
+  const h1 = app.querySelector('h1'); h1.textContent = 'Histórico do veículo';
+  app.querySelector('.desenho').remove();
+  app.querySelector('.meta').remove();
+}
+
+function telaCarregando() {
+  app.replaceChildren(
+    el('section', { class: 'heroi' }, el('div', { class: 'heroi-in' },
+      el('img', { class: 'logo', src: 'logo-escura.png', alt: 'Auto Mecânica Itabaiana — Peças e Serviços', width: 900, height: 411 }),
+      el('h1', { style: 'margin-top:22px' }, 'Carregando o histórico…'))),
+    el('div', { class: 'conteudo' }, el('section', { class: 'cartao flutua carregando', 'aria-hidden': 'true' },
+      el('div', { class: 'pulso', style: 'width:60%' }), el('div', { class: 'pulso' }), el('div', { class: 'pulso', style: 'width:80%' }))));
+}
+
+function telaHistorico(d) {
+  const v = d.veiculo || {};
+  const servicos = Array.isArray(d.servicos) ? d.servicos : [];
+  const nome = v.modelo || 'Seu veículo';
+
+  // óleo: prazo pela data do programa (mesma da etiqueta) ou data + meses
+  const ultimaOleo = servicos.find((s) => (s.itens || []).includes('Óleo do motor'));
+  const comProxima = servicos.find((s) => s.proximaTrocaKm);
+  let oleo = null;
+  if (ultimaOleo && dataDe(ultimaOleo.data)) {
+    const inicio = dataDe(ultimaOleo.data);
+    const prazo = dataDe(ultimaOleo.proximaTrocaData) || maisMeses(inicio, CONFIG.mesesTrocaOleo);
+    const frac = Math.min(1, Math.max(0, (Date.now() - inicio) / Math.max(1, prazo - inicio)));
+    oleo = { inicio, prazo, frac, estado: estadoDe(frac), proxKm: comProxima && comProxima.proximaTrocaKm,
+      kmAtual: servicos.reduce((m, s) => Math.max(m, s.km || 0), 0) || null };
+  }
+  // correia dentada
+  const sc = servicos.find((x) => x.proximaCorreiaData || x.proximaCorreiaKm);
+  let correia = null;
+  if (sc && dataDe(sc.proximaCorreiaData)) {
+    const prazo = dataDe(sc.proximaCorreiaData);
+    const dias = (prazo - Date.now()) / 864e5;
+    correia = { prazo, estado: dias <= 0 ? 'atrasada' : dias <= 60 ? 'perto' : 'ok', proxKm: sc.proximaCorreiaKm || null };
+  }
+  const ordem = { ok: 0, perto: 1, atrasada: 2 };
+  let geral = oleo ? oleo.estado : correia ? 'ok' : null;
+  if (correia && geral && ordem[correia.estado] > ordem[geral]) geral = correia.estado;
+  const veic = Object.assign({}, v, { km: servicos.reduce((m, s) => Math.max(m, s.km || 0), 0) || null });
+
+  app.replaceChildren(
+    certificado(nome, v.ano),
+    heroi(veic, geral),
+    el('div', { class: 'conteudo' },
+      cartaoProxima(nome, servicos, oleo),
+      servicos[0] ? cartaoFeito(servicos[0]) : null,
+      saude(servicos, oleo, correia),
+      linhaDoTempo(servicos),
+      acoes(nome),
+      avaliar()),
+    rodape(d.atualizadoEm));
+  document.title = `${nome} — Histórico — ${CONFIG.oficina}`;
+}
+
+/* ---------- dados ---------- */
+const antes = (dias) => iso(maisDias(new Date(), -dias));
+const depois = (dias) => iso(maisDias(new Date(), dias));
+const EXEMPLO = {
+  ok: true,
+  veiculo: { modelo: 'Fiat Strada Freedom', ano: '2019', placa: 'QKT4E21' },
+  servicos: [
+    { data: antes(12), km: 153273, itens: ['Óleo do motor', 'Filtro de óleo'], outros: '', proximaTrocaKm: 160273, proximaTrocaData: depois(170), obs: 'Óleo Lubrax 5W30 sintético' },
+    { data: antes(95), km: 149880, itens: [], outros: 'Correia dentada\nTensor\nAlinhamento e balanceamento', proximaTrocaKm: null, obs: '',
+      proximaCorreiaKm: 189880, proximaCorreiaData: depois(270) },
+    { data: antes(140), km: 148500, itens: [], outros: "Bomba d'água", proximaTrocaKm: null, obs: '', garantia: 'mao_de_obra' },
+    { data: antes(200), km: 146273, itens: ['Óleo do motor', 'Filtro de óleo', 'Filtro de ar', 'Filtro de combustível'], outros: '', proximaTrocaKm: 153273, obs: '' },
+    { data: antes(420), km: 139504, itens: ['Óleo de freio'], outros: 'Pastilhas de freio dianteiras', proximaTrocaKm: null, obs: 'Discos ainda em bom estado.' },
+  ],
+  atualizadoEm: iso(new Date()) + 'T08:00',
+};
+
+async function sha256(texto) {
+  return new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(texto)));
+}
+async function idPublico(c) {
+  return [...(await sha256(CONFIG.sal + c)).slice(0, 10)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+// a placa vem trancada com o código do QR: só quem escaneou a etiqueta consegue ver
+async function abrirPlaca(cifrada, c) {
+  try {
+    const bruto = Uint8Array.from(atob(cifrada), (ch) => ch.charCodeAt(0));
+    const chave = await crypto.subtle.importKey('raw', await sha256('placa|' + c), 'AES-GCM', false, ['decrypt']);
+    const txt = new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: bruto.slice(0, 12) }, chave, bruto.slice(12)));
+    return /^[A-Z0-9]{7}$/.test(txt) ? txt : '';
+  } catch (e) { return ''; }
+}
+
+function lerCSV(texto) {
+  const linhas = [];
+  let linha = [], campo = '', aspas = false;
+  for (let i = 0; i < texto.length; i++) {
+    const ch = texto[i];
+    if (aspas) {
+      if (ch === '"' && texto[i + 1] === '"') { campo += '"'; i++; }
+      else if (ch === '"') aspas = false;
+      else campo += ch;
+    } else if (ch === '"') aspas = true;
+    else if (ch === ',') { linha.push(campo); campo = ''; }
+    else if (ch === '\n' || ch === '\r') {
+      if (ch === '\r' && texto[i + 1] === '\n') i++;
+      linha.push(campo); linhas.push(linha); linha = []; campo = '';
+    } else campo += ch;
+  }
+  if (campo !== '' || linha.length) { linha.push(campo); linhas.push(linha); }
+  return linhas;
+}
+const numero = (v) => { const s = String(v || '').replace(/\D/g, ''); return s ? parseInt(s, 10) : null; };
+
+async function baixar(url, accept) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 20000);
+  try {
+    const r = await fetch(url, { signal: ctrl.signal, cache: 'no-store', headers: accept ? { Accept: accept } : {} });
+    if (r.status === 404) return ''; // ainda não tem nada publicado aqui
+    if (!r.ok) throw new Error('http ' + r.status);
+    return await r.text();
+  } finally { clearTimeout(t); }
+}
+async function lerFonte(f) {
+  try { return await baixar(f.url, f.accept); } catch (e) { if (f.reserva) return baixar(f.reserva); throw e; }
+}
+
+async function buscar() {
+  if (codigo === 'DEMO') { await new Promise((r) => setTimeout(r, 700)); return EXEMPLO; }
+  if (!/^[A-Z0-9]{6,12}$/.test(codigo)) return { ok: false, erro: 'codigo_invalido' };
+  const id = await idPublico(codigo);
+  const textos = await Promise.allSettled(CONFIG.fontes.map(lerFonte));
+  if (textos.every((t) => t.status === 'rejected')) throw new Error('rede');
+  let atualizadoEm = '', modelo = '', ano = '', placaCifrada = '', achou = false;
+  const vistos = new Set();
+  const servicos = [];
+  for (const t of textos) {
+    if (t.status !== 'fulfilled' || !t.value) continue;
+    const linhas = lerCSV(t.value);
+    const cab = linhas[0] || [];
+    const c = Object.fromEntries(['id', 'modelo', 'ano', 'data', 'km', 'itens', 'outros', 'proxima_troca_km', 'obs',
+      'proxima_troca_data', 'proxima_correia_km', 'proxima_correia_data', 'garantia', 'placa_cifrada'].map((n) => [n, cab.indexOf(n)]));
+    const col = (l, n) => (c[n] >= 0 ? l[c[n]] || '' : '');
+    if (c.id < 0) continue;
+    for (const l of linhas.slice(1)) {
+      if (l[c.id] === '_') { if ((l[c.modelo] || '') > atualizadoEm) atualizadoEm = l[c.modelo] || ''; continue; }
+      if (l[c.id] !== id) continue;
+      achou = true;
+      if (!modelo && l[c.modelo]) { modelo = l[c.modelo]; ano = l[c.ano] || ''; }
+      if (!placaCifrada) placaCifrada = col(l, 'placa_cifrada');
+      if (!(l[c.data] || l[c.itens] || l[c.outros])) continue;
+      const s = {
+        data: l[c.data] || '', km: numero(l[c.km]),
+        itens: String(l[c.itens] || '').split(';').map((x) => x.trim()).filter(Boolean),
+        outros: String(l[c.outros] || '').replace(/\r\n?/g, '\n'),
+        proximaTrocaKm: numero(l[c.proxima_troca_km]), obs: l[c.obs] || '',
+      };
+      const chave = JSON.stringify(s); // (só as colunas antigas: o mesmo serviço nas duas fontes)
+      s.proximaTrocaData = col(l, 'proxima_troca_data');
+      s.proximaCorreiaKm = numero(col(l, 'proxima_correia_km'));
+      s.proximaCorreiaData = col(l, 'proxima_correia_data');
+      s.garantia = col(l, 'garantia');
+      if (vistos.has(chave)) continue;
+      vistos.add(chave);
+      servicos.push(s);
+    }
+  }
+  if (!achou) return { ok: false, erro: 'nao_encontrado' };
+  servicos.sort((a, b) => (b.data || '').localeCompare(a.data || '') || (b.km || 0) - (a.km || 0));
+  const placaV = placaCifrada ? await abrirPlaca(placaCifrada, codigo) : '';
+  return { ok: true, veiculo: { modelo, ano, placa: placaV }, servicos, atualizadoEm };
+}
+
+async function iniciar() {
+  if (!codigo) {
+    telaMensagem('Histórico do veículo', 'Para ver os serviços feitos no seu carro, aponte a câmera do celular para o QR Code da etiqueta da oficina.');
+    return;
+  }
+  telaCarregando();
+  try {
+    const d = await buscar();
+    if (d && d.ok) { telaHistorico(d); return; }
+    telaMensagem('Veículo não encontrado',
+      `O código ${codigo} não está no sistema da oficina. Confira se o QR Code é de uma etiqueta da ${CONFIG.oficina} ou fale com a gente.`);
+  } catch (e) {
+    const tentar = el('button', { class: 'botao claro', type: 'button', onclick: iniciar }, 'Tentar de novo');
+    telaMensagem('Não deu para carregar o histórico', 'Verifique a internet do celular e tente de novo.', tentar);
+  }
+}
+iniciar();
+</script>
+</body>
+</html>
