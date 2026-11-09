@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oficina QR</title>
+<link rel="icon" href="icone.png">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<header class="topo">
+  <a class="marca" href="#/" title="Início"><img src="logo-escura.png" alt="Auto Mecânica Itabaiana"></a>
+  <form class="busca" id="busca" role="search">
+    <input id="q" type="search" placeholder="Buscar placa, modelo ou cliente" autocomplete="off" aria-label="Buscar carro">
+    <div class="sugestoes" id="sugestoes" hidden></div>
+  </form>
+  <a class="botao vermelho escrita" href="#/novo" id="btn-novo" title="Atalho: F2">+ Novo serviço</a>
+  <nav class="menu" aria-label="Telas">
+    <a class="engrenagem" href="#/" id="btn-inicio" title="Tela inicial"><span aria-hidden="true">🏠</span> Início</a>
+    <a class="engrenagem" href="#/" id="btn-revisar" title="Atalho: F4">Para revisar</a>
+    <a class="engrenagem" href="#/termos" title="Termo de responsabilidade quando o cliente traz a peça"><span aria-hidden="true">📝</span> Termo de peça</a>
+    <a class="engrenagem" href="#/lembretes"><span aria-hidden="true">🔔</span> Lembretes</a>
+    <a class="engrenagem" href="#/relatorio"><span aria-hidden="true">📊</span> Relatório</a>
+    <a class="engrenagem" href="#/config" title="Configurações"><span aria-hidden="true">⚙</span> Configurações</a>
+  </nav>
+  <div class="acessibilidade" role="group" aria-label="Tamanho da letra e contraste">
+    <button type="button" id="a-menos" title="Letra menor" aria-label="Letra menor">A−</button>
+    <button type="button" id="a-mais" title="Letra maior" aria-label="Letra maior">A+</button>
+    <button type="button" id="a-contraste" title="Alto contraste" aria-label="Alto contraste">◐</button>
+  </div>
+</header>
+<div class="faixa-estado" id="estado" aria-live="polite"></div>
+<main id="tela" tabindex="-1"></main>
+<div class="avisos" id="avisos" aria-live="assertive"></div>
+<script src="app.js"></script>
+</body>
+</html>

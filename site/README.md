@@ -13,5 +13,3 @@ Página aberta pelo QR Code das etiquetas.
 
 Não renomeie este repositório, a conta do GitHub nem apague o ramo `dados`:
 os QR Codes já impressos apontam para `https://automec135.github.io/`.
-
-Versão da página: 1.2 (selo de revisão, garantia, lembrete na agenda, plano de manutenção, avaliação no Google e histórico em PDF).

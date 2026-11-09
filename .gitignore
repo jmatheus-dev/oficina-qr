@@ -1,0 +1,6 @@
+*.exe
+/oficinaqr
+__pycache__/
+*.log
+dados.json
+config.json

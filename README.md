@@ -22,11 +22,14 @@ Quando um serviço é lançado no Zeus, ele vira uma etiqueta com QR Code colada
                                           └─► historico.csv (GitHub) ──► site estático ◄── cliente escaneia
 ```
 
-### Aplicativo desktop: `programa/`
+### Aplicativo desktop: `app/` (Go, versão 1.6.1)
 - Lê as vendas do ERP Zeus direto no banco PostgreSQL, com acesso somente leitura.
 - Espera a venda ficar estável, junta vendas do mesmo carro no mesmo dia e manda tudo para revisão antes de imprimir. Nada sai impresso sem conferência.
 - Escolhe sozinho a etiqueta certa (troca de óleo, correia dentada ou as duas juntas) e imprime direto na impressora térmica iDPRT/Teclabel iE4S.
 - Publica o histórico no GitHub pela API, com token guardado cifrado.
+- Também lê os PDFs de venda/orçamento do Zeus, para quando o banco não está disponível.
+- Interface web local (HTML/CSS/JS embutidos no executável), com computador principal e computadores só de consulta na rede da oficina.
+- Termo de responsabilidade assinado na tela para peças trazidas pelo cliente.
 - Executável único, sem instalação.
 
 ### Site público: `site/`
@@ -35,12 +38,29 @@ Quando um serviço é lançado no Zeus, ele vira uma etiqueta com QR Code colada
 - Mostra selo de revisão, garantia, plano de manutenção, lembrete na agenda e gera o histórico em PDF.
 
 ## Tecnologias
-Go · PostgreSQL · HTML/CSS/JavaScript · GitHub Pages · API do GitHub · impressão térmica (GDI)
+Go · PostgreSQL · HTML/CSS/JavaScript · GitHub Pages · API do GitHub · impressão térmica (GDI) · Google Apps Script · testes com Go `testing` e Python + Playwright
 
 ## Estrutura
 ```
-site/       página pública do histórico (GitHub Pages)
-programa/   código-fonte do aplicativo desktop Oficina QR (em breve)
+app/          aplicativo desktop Oficina QR (Go)
+  internal/zeus       leitura do ERP Zeus (banco e PDFs)
+  internal/pdfzeus    leitor de PDF feito do zero
+  internal/etiqueta   desenho das etiquetas com QR Code
+  internal/impressora impressão direta na iE4S (Windows)
+  internal/dados      veículos, serviços, histórico público e cifra das placas
+  internal/servidor   API e interface local
+  ui/                 telas do aplicativo
+site/         página pública do histórico (GitHub Pages)
+apps-script/  versão anterior com Google Planilhas + Apps Script
+test/         testes de ponta a ponta (Python + Playwright)
 ```
 
-> Os dados reais dos clientes **não** estão neste repositório.
+## Como compilar
+```bash
+cd app
+go test ./...
+GOOS=windows GOARCH=amd64 go build -o OficinaQR.exe .
+```
+As dependências já estão em `app/vendor/`, então a compilação funciona sem internet.
+
+> Os dados reais dos clientes **não** estão neste repositório. Placas, códigos e nomes nos testes são fictícios.

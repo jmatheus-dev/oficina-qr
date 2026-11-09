@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<style>
+  * { box-sizing: border-box; }
+  body { font: 14px/1.4 Arial, sans-serif; color: #202124; margin: 0; padding: 12px 14px 24px; }
+  label { display: block; font-weight: bold; margin: 12px 0 4px; }
+  input[type=text], input[type=date], input[type=number], textarea {
+    width: 100%; padding: 7px 8px; border: 1px solid #b9bec4; border-radius: 4px; font: inherit;
+  }
+  input:focus, textarea:focus, button:focus-visible { outline: 2px solid #E8A317; outline-offset: 1px; }
+  textarea { resize: vertical; min-height: 54px; }
+  .linha { display: flex; gap: 8px; }
+  .linha > div { flex: 1; }
+  #placa { font: bold 20px monospace; letter-spacing: 2px; text-transform: uppercase; }
+  .info { margin-top: 6px; padding: 8px; border-radius: 4px; background: #F1F3F4; font-size: 13px; }
+  .info b { font-family: monospace; font-size: 14px; }
+  .itens { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; margin-top: 4px; }
+  .itens label { font-weight: normal; margin: 0; display: flex; gap: 6px; align-items: center; cursor: pointer; }
+  .atalhos { display: flex; gap: 6px; margin-top: 6px; }
+  .atalhos button { flex: 1; padding: 4px; font-size: 12px; background: #fff; border: 1px solid #b9bec4; border-radius: 4px; cursor: pointer; }
+  .dica { color: #5f6368; font-size: 12px; font-weight: normal; }
+  .principal { width: 100%; margin-top: 18px; padding: 10px; font: bold 15px Arial, sans-serif; color: #fff; background: #1E2329; border: 0; border-radius: 4px; cursor: pointer; }
+  .principal:disabled { opacity: .6; cursor: wait; }
+  .erro { margin-top: 10px; padding: 8px; border-radius: 4px; background: #FCE8E6; color: #A50E0E; }
+  #ok { display: none; }
+  #ok h2 { font-size: 17px; margin: 4px 0 8px; }
+  #codigo { width: 100%; font: bold 30px monospace; letter-spacing: 4px; text-align: center; padding: 8px; border: 2px solid #1E2329; border-radius: 4px; background: #FFF8E6; }
+  .secundario { width: 100%; margin-top: 8px; padding: 8px; font: bold 14px Arial, sans-serif; background: #fff; border: 1px solid #1E2329; border-radius: 4px; cursor: pointer; }
+  a { color: #1a5fb4; word-break: break-all; }
+</style>
+</head>
+<body>
+<form id="form" autocomplete="off">
+  <label for="placa">Placa</label>
+  <input type="text" id="placa" name="placa" maxlength="8" placeholder="ABC1D23" required value="<?= placaInicial ?>">
+  <div id="infoVeiculo" class="info" hidden></div>
+
+  <div class="linha">
+    <div><label for="modelo">Modelo</label><input type="text" id="modelo" name="modelo" placeholder="Ex.: Fiat Strada"></div>
+    <div style="flex:.45"><label for="ano">Ano</label><input type="text" id="ano" name="ano" maxlength="9" placeholder="2019"></div>
+  </div>
+
+  <div class="linha">
+    <div><label for="data">Data</label><input type="date" id="data" name="data" value="<?= hoje ?>" required></div>
+    <div><label for="km">KM atual</label><input type="text" id="km" name="km" inputmode="numeric" placeholder="153.273"></div>
+  </div>
+
+  <label>O que foi trocado</label>
+  <div class="itens">
+    <? for (var i = 0; i < itens.length; i++) { ?>
+      <label><input type="checkbox" name="itens" value="<?= itens[i] ?>"> <?= itens[i] ?></label>
+    <? } ?>
+  </div>
+
+  <label for="outros">Outros serviços / peças trocadas</label>
+  <textarea id="outros" name="outros" rows="3" placeholder="Ex.: troca da correia dentada e do tensor"></textarea>
+
+  <label for="prox">Próxima troca de óleo (KM)</label>
+  <input type="text" id="prox" name="proximaTrocaKm" inputmode="numeric" placeholder="160.273">
+  <div class="atalhos">
+    <button type="button" data-soma="5000">+5 mil</button>
+    <button type="button" data-soma="7000">+7 mil</button>
+    <button type="button" data-soma="10000">+10 mil</button>
+  </div>
+
+  <label for="obsCliente">Observação para o cliente <span class="dica">(aparece no QR)</span></label>
+  <textarea id="obsCliente" name="obsCliente" rows="2"></textarea>
+
+  <label for="obsInterna">Observação interna <span class="dica">(não aparece no QR)</span></label>
+  <textarea id="obsInterna" name="obsInterna" rows="2"></textarea>
+
+  <div id="erro" class="erro" hidden></div>
+  <button class="principal" id="salvar" type="submit">Salvar serviço</button>
+</form>
+
+<div id="ok">
+  <h2>Serviço salvo</h2>
+  <p style="margin:0 0 6px">Código do veículo <b id="okPlaca"></b> para a etiqueta:</p>
+  <input id="codigo" readonly>
+  <button class="principal" id="copiar" type="button">Copiar código</button>
+  <p class="dica" style="margin-top:10px">No BarTender, clique em Imprimir e cole o código no campo <b>Código do veículo</b>.</p>
+  <p class="dica">O QR Code abre: <a id="okLink" target="_blank" rel="noopener"></a></p>
+  <button class="secundario" id="outro" type="button">Registrar outro serviço</button>
+</div>
+
+<script>
+  var form = document.getElementById('form');
+  var placa = document.getElementById('placa');
+  var info = document.getElementById('infoVeiculo');
+  var erro = document.getElementById('erro');
+  var salvar = document.getElementById('salvar');
+
+  function soNumeros(v) { return String(v || '').replace(/\D/g, ''); }
+  function milhar(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+  function mostrarErro(msg) { erro.textContent = msg; erro.hidden = !msg; }
+
+  function buscar() {
+    var p = placa.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    placa.value = p;
+    info.hidden = true;
+    if (p.length < 7) return;
+    google.script.run.withSuccessHandler(function (v) {
+      if (!v || placa.value !== v.placa) return;
+      info.hidden = false;
+      if (!v.encontrado) {
+        info.textContent = 'Placa nova: o veículo será cadastrado ao salvar.';
+        return;
+      }
+      if (v.modelo && !form.modelo.value) form.modelo.value = v.modelo;
+      if (v.ano && !form.ano.value) form.ano.value = v.ano;
+      info.innerHTML = '';
+      var t = document.createElement('div');
+      t.textContent = (v.modelo || 'Veículo') + (v.ano ? ' ' + v.ano : '') + ' — ' + v.servicos + ' serviço(s) registrado(s)';
+      var c = document.createElement('div');
+      c.append('Código do QR: ');
+      var b = document.createElement('b'); b.textContent = v.codigo; c.append(b);
+      info.append(t, c);
+      if (v.ultimoKm) {
+        var k = document.createElement('div');
+        k.textContent = 'Último KM registrado: ' + milhar(v.ultimoKm);
+        info.append(k);
+      }
+    }).buscarVeiculo(p);
+  }
+  placa.addEventListener('change', buscar);
+  placa.addEventListener('keyup', function () { if (placa.value.replace(/[^A-Za-z0-9]/g, '').length >= 7) buscar(); });
+  if (placa.value) buscar();
+
+  document.querySelectorAll('[data-soma]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var km = parseInt(soNumeros(form.km.value), 10);
+      if (!km) { mostrarErro('Preencha o KM atual para calcular a próxima troca.'); form.km.focus(); return; }
+      mostrarErro('');
+      form.proximaTrocaKm.value = milhar(km + parseInt(b.dataset.soma, 10));
+    });
+  });
+
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    mostrarErro('');
+    var dados = {
+      placa: form.placa.value,
+      modelo: form.modelo.value,
+      ano: form.ano.value,
+      data: form.data.value,
+      km: form.km.value,
+      itens: Array.prototype.map.call(form.querySelectorAll('input[name=itens]:checked'), function (c) { return c.value; }),
+      outros: form.outros.value,
+      proximaTrocaKm: form.proximaTrocaKm.value,
+      obsCliente: form.obsCliente.value,
+      obsInterna: form.obsInterna.value
+    };
+    salvar.disabled = true;
+    salvar.textContent = 'Salvando…';
+    google.script.run
+      .withSuccessHandler(function (r) {
+        salvar.disabled = false;
+        salvar.textContent = 'Salvar serviço';
+        form.style.display = 'none';
+        document.getElementById('ok').style.display = 'block';
+        document.getElementById('okPlaca').textContent = r.placa;
+        var c = document.getElementById('codigo');
+        c.value = r.codigo;
+        c.select();
+        var a = document.getElementById('okLink');
+        a.href = r.link;
+        a.textContent = r.link;
+      })
+      .withFailureHandler(function (e) {
+        salvar.disabled = false;
+        salvar.textContent = 'Salvar serviço';
+        mostrarErro((e && e.message) || 'Não foi possível salvar. Tente de novo.');
+      })
+      .registrarServico(dados);
+  });
+
+  document.getElementById('copiar').addEventListener('click', function () {
+    var c = document.getElementById('codigo');
+    var botao = this;
+    function feito() { botao.textContent = 'Código copiado'; }
+    c.select();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(c.value).then(feito, function () { document.execCommand('copy'); feito(); });
+    } else { document.execCommand('copy'); feito(); }
+  });
+
+  document.getElementById('outro').addEventListener('click', function () {
+    form.reset();
+    form.data.value = '<?= hoje ?>';
+    info.hidden = true;
+    document.getElementById('copiar').textContent = 'Copiar código';
+    document.getElementById('ok').style.display = 'none';
+    form.style.display = 'block';
+    placa.focus();
+  });
+</script>
+</body>
+</html>
